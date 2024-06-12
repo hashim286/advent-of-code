@@ -12,4 +12,5 @@ def main(file_name):
 
         print(sum(line_matches))
 
+
 main(FILENAME)
