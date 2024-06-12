@@ -2,7 +2,7 @@ import re
 
 FILENAME = "input.txt"
 
-total_max = {
+max_val_for_each_color = {
     "red": 12,
     "blue": 14,
     "green": 13
@@ -46,7 +46,7 @@ def check_valid(line):
         draw_split = draw.split(" ")
         # compare the max value defined in the dictionary to the integer value in the item, set the valid value to false
         # if it is greater
-        if total_max.get(draw_split[1]) < int(draw_split[0]):
+        if max_val_for_each_color.get(draw_split[1]) < int(draw_split[0]):
             valid = False
             return valid
 
