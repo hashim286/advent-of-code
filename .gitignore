@@ -1,10 +1,16 @@
 # ignoring .idea folder
-.idea/*
-*/.idea/*
+*.idea
 
 # ignore venv
-.venv/
+*.venv
 
 
 # ignore swp files
 *.swp
+
+
+# ignore input files
+*example.txt
+*input.txt
+*text.txt
+*data.txt
