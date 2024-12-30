@@ -1,5 +1,5 @@
 import math
-with open("data.txt") as file: 
+with open("example.txt") as file: 
     data = file.read()
     parts = data.split("\n\n")
     instructions = parts[0]
@@ -24,9 +24,12 @@ with open("data.txt") as file:
             # checks if we recursed at all
             recursed = False
             pages_first = rules_dict.get(page)
-            if pages_first is None and page not in page_order and not recursed: 
+            if pages_first is None and page not in page_order: 
                # if the current num has no restrictions on it and it is not in the ordered list and we did not recurse, we can add it otthe page_order list
                page_order.append(page)
+               return page_order, recursed
+
+            elif pages_first is None and page in page_order: 
                return page_order, recursed
 
             for page_restriction in pages_first: 
