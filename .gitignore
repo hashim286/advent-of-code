@@ -15,3 +15,6 @@
 *text.txt
 *data.txt
 *.vimspector.json
+*.swp
+*.swo
+*test*
