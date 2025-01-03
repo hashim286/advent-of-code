@@ -1,7 +1,7 @@
 import re
 
 
-with open("example.txt") as file: 
+with open("data.txt") as file: 
     # read in the file and clean off \n character at the end of each item 
     lines: list[str] = file.readlines()
     lines: list[str] = [lines_cleaned.strip() for lines_cleaned in lines]
@@ -27,12 +27,12 @@ class Guard:
                                               "west": "north"
                                               }
         # this dictionary will keep track of every coordinate I have visited
-        self.visited_coords: dict[str, bool] = {}
         self.obstruction_coords: tuple[int, int] 
         self.obstructions_visited: dict[str, str] = {}
         self.loop_obstructions: list[tuple[int, int]] = []
 
     def move_to_start(self) -> str: 
+        # resetting all the attributes and returning a direction for the loop 
         self.x_coord = self.x_coord_start
         self.y_coord = self.y_coord_start 
         self.direction = "north" 
@@ -56,12 +56,6 @@ class Guard:
         # breaks if it gets a "True" boolean indicating an obstruction or if the coordinates are less than 0 in either direction
         while not self.is_obstructed: 
             # if we get coordinates < 0 for either x or y, we raise an index error to break the loop as a negative index will go to the end of the list and add in negative indices which may have been visited but will be counted as new visits
-            if self.x_coord < 0 or self.y_coord < 0: 
-                raise IndexError
-
-            # we query our dictionary that tracks our coordinates to see if there is already an entry, if so then we know we've been here before and can continue as normal, if not we add the new entry 
-            if self.visited_coords.get(f"{self.x_coord}|{self.y_coord}") is None:
-                self.visited_coords[f"{self.x_coord}|{self.y_coord}"] = True
 
             self.change_coords(direction) 
             self.is_obstructed = self.detect_obstruction(direction)
@@ -72,28 +66,34 @@ class Guard:
         return self.direction
         
     def detect_obstruction(self, direction: str) -> bool: 
+        if self.x_coord < 0 or self.y_coord < 0: 
+            raise IndexError
         # checks to see if the current character is an obstruction character and returns True if it is
         if (self.lines[self.x_coord][self.y_coord] == "#") or (self.x_coord == self.obstruction_coords[0] and self.y_coord == self.obstruction_coords[1]): 
+            # if it's an obstruction, check to see if we have already visited this obstruction's coordinates before by querying the dictionary, if it returns None we add a new key value pair with the current direction and return true
             if self.obstructions_visited.get(f"{self.x_coord}|{self.y_coord}") is None: 
                 self.obstructions_visited[f"{self.x_coord}|{self.y_coord}"] = [direction]
+
+            # if we have visited this obstruction, then we loop through the list of direction that it was impacted from to see if any match our current direction. If we impact the same obstruction from the same direction, we are in a loop and we can raise an index error after adding this obstruction's coordinates to the list of loop creating coordinates
             else: 
                 for impacted_direction in self.obstructions_visited.get(f"{self.x_coord}|{self.y_coord}"): 
                     if impacted_direction == direction: 
-                        
                         self.loop_obstructions.append(self.obstruction_coords)
-                        print(self.obstruction_coords)
                         self.obstructions_visited.get(f"{self.x_coord}|{self.y_coord}").append(direction)
-                        print(self.obstructions_visited)
                         raise IndexError
-                    
+
+                
+                # if we are impacting from a new direction then we add this direction to the list to keep track of it
                 self.obstructions_visited.get(f"{self.x_coord}|{self.y_coord}").append(direction)
 
             return True
 
+        # this coordinate does not have obstructions
         else: 
             return False
 
     def change_coords(self, direction: str, backwards: bool = False) -> None: 
+        """there is probably a much better way to do this part but my brain was fried at this point"""
         # undo our last movement to no longer be at the coordinates of the obstruction
         if backwards: 
             if direction == "north": 
@@ -132,6 +132,7 @@ def main(lines: list[str]) -> None:
     direction: str = guard.direction
     for i in range(len(lines)): 
         for j in range(len(lines[0])):
+            # reset the direction and call the move to start function to reset the guard object
             direction = guard.move_to_start()
             if i == guard.x_coord_start and j == guard.y_coord_start: 
                 continue
@@ -141,7 +142,6 @@ def main(lines: list[str]) -> None:
                 except IndexError: 
                     break 
 
-#    print(len(guard.loop_obstructions))
-#    print(guard.loop_obstructions)
+    print(len(guard.loop_obstructions))
 
 main(lines)
