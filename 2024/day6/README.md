@@ -1,0 +1,1 @@
+This one tested me hard, I don't know why I chose to use a Class for this but it seemed like the most obvious way to me at the time and I lowkey regret it but at the same time I'm glad I was able to solve it even if this is probably the slowest possible way to do this problem and almost certainly unoptomized
